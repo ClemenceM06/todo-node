@@ -72,7 +72,7 @@ app.post('/delete', async(req, res) => {
 
 //server configurations
 app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost: ${PORT}`);
+    console.log(`Server is running on http://localhost:${PORT}`);
 });
 
 app.use((err, req, res, next) => {
