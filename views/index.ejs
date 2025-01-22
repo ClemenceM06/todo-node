@@ -1,0 +1,20 @@
+<% include ('layouts/header') %>
+<section>
+
+    <form action="/add" method="post">
+        <input type="text" name="task" placeholder="New Task" required>
+        <button type="submit">Add</button>
+    </form>
+
+    <ul>
+        <% todos.forEach(todo => { %>
+        <li>
+            <span><%= todo.task%></span>
+            <form action="/delete" method="post" style="display: inline;">
+                <input type="hidden" name="id" value="<%= todo._id %>">
+                <button type="submit">Delete</button>
+            </form>
+        </li>
+    <% }) %>
+    </ul>
+</section>
