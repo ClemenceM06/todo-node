@@ -10,7 +10,7 @@ const expressLayouts = require('express-ejs-layouts');
 app.use(expressLayouts);
 
 app.set('view engine', 'ejs');
-app.set('layout', 'layouts');
+app.set('layout', 'layout');
 
 //connection to mongodb
 mongoose.connect("mongodb://localhost:27017/mydatabase", {
