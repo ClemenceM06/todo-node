@@ -1,7 +1,7 @@
 const mongoose = require("Mongoose");
 
 const TodoSchema = new mongoose.Schema({
-    todo:{
+    task:{
         type: String,
         required: true,
     },

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do App</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+
+    <header>
+        <h1>To-Do List</h1>
+    </header>
+
+    <form id="todoForm">
+        <input type="text" id="itemInput" placeholder="Enter Item" required>
+        <button type="submit">Add Item</button>
+    </form>
+
+    <ul id="todoList"></ul>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('todoForm');
+            const input = document.getElementById('itemInput');
+            const todoList = document.getElementById('todoList');
+    
+            // Load existing items when the page loads
+            window.addEventListener('DOMContentLoaded', () => {
+                fetch('/items')
+                    .then(response => response.json())
+                    .then(data => {
+                        data.forEach(item => addToDOM(item));
+                    })
+                    .catch(error => console.error('Error loading items:', error));
+            });
+    
+            // Add event listener for form submission
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+    
+                const item = input.value.trim();
+                if (!item) return;
+    
+                // Send the new item to the server using Fetch API
+                fetch('/add', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ item }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.item) {
+                        addToDOM(data.item); // Add item to the DOM
+                        input.value = '';    // Clear the input field
+                    }
+                })
+                .catch(error => console.error('Error adding item:', error));
+            });
+    
+            // Helper function to add an item to the DOM
+            function addToDOM(item) {
+                const li = document.createElement('li');
+                li.textContent = item;
+
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'Delete';
+                deleteButton.style.marginLeft = '10px';
+
+                deleteButton.addEventListener('click', () => {
+                    fetch(`/delete/${item}`, { method: 'DELETE' })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) li.remove();
+                    })
+                    .catch(console.error);
+                });
+
+                li.appendChild(deleteButton);
+                todoList.appendChild(li);
+            }
+        });
+    </script>
+    
+   
+</body>
+</html>

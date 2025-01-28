@@ -1,20 +1,63 @@
-<% include ('layouts/header') %>
-<section>
-
-    <form action="/add" method="post">
-        <input type="text" name="task" placeholder="New Task" required>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo App</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <h1>Todo List</h1>
+    <form id="todoForm">
+        <input type="text" id="itemInput" placeholder="Enter new item" required>
         <button type="submit">Add</button>
     </form>
 
-    <ul>
-        <% todos.forEach(todo => { %>
-        <li>
-            <span><%= todo.task%></span>
-            <form action="/delete" method="post" style="display: inline;">
-                <input type="hidden" name="id" value="<%= todo._id %>">
-                <button type="submit">Delete</button>
-            </form>
-        </li>
-    <% }) %>
+    <ul id="todoList">
+        <% items.forEach(function(item) { %>
+            <li><%= item %></li>
+        <% }); %>
     </ul>
-</section>
+
+    <script>
+        // Get the form and input elements
+        const form = document.getElementById('todoForm');
+        const input = document.getElementById('itemInput');
+        const todoList = document.getElementById('todoList');
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();  // Prevent the default form submission
+
+            // Get the new item from the input field
+            const item = input.value;
+
+            // Use Fetch API to send the item to the server
+            fetch('/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `item=${encodeURIComponent(item)}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                // If the item is added successfully, update the list
+                if (data.success) {
+                    const li = document.createElement('li');
+                    li.textContent = data.item;  // Add the new item to the list
+                    todoList.appendChild(li);
+
+                    // Clear the input field
+                    input.value = '';
+                } else {
+                    alert('Failed to add item');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Something went wrong!');
+            });
+        });
+    </script>
+</body>
+</html>
